@@ -84,4 +84,13 @@ contract('Registry', (accounts) => {
     assert.equal(web3.toAscii(register.logs[1].args.contentType).replace(/\u0000/g, ''), 'MusicGroup');
     assert.equal(register.logs[1].args.cid, 'Qmb');
   });
+
+  it('record previous block number', async () => {
+    // this will publish 2 events
+    const register = await registry.publish([accounts[1], accounts[1]], ['delete', 'create'], ['MusicGroup', 'MusicGroup'], 'Qma|Qmb', { from: accounts[1] });
+    const number = web3.eth.blockNumber;
+
+    assert.equal(register.logs[0].args.prevBlock, 0);
+    assert.equal(register.logs[1].args.prevBlock, number);
+  });
 });
